@@ -4,7 +4,7 @@
     <div class="layout-title">CHI TIẾT DỮ LIỆU HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
     <div class="layout-filter flex-wrap">
       <div class="filter-group flex-wrap col-sm-10">
-        <!-- <div class="form-group col-sm-2">
+        <div class="form-group col-sm-2">
           <label for="">Thời gian kết thúc</label>
           <input
             class="form-control"
@@ -24,14 +24,37 @@
             v-model="endDateTime"
           />
         </div>
-        <div class="form-group col-sm-1">
+        <div class="form-group col-sm-2">
           <label for="">Bộ phận</label>
           <select class="form-control" name="department" v-model="department" id="">
-            <option>Lựa chọn 1</option>
-            <option>Lựa chọn 2</option>
-            <option>Lựa chọn 3</option>
+            <option value="" selected>Chọn bộ phận</option>
+            <option v-for="option in departmentOptions" :key="option.value">{{ option.label }}</option>
           </select>
-        </div> -->
+        </div>
+        <div class="form-group">
+          <label for="">Họ và tên(Không dấu)</label>
+          <input
+            type="text"
+            class="form-control"
+            name="fordCardID"
+            id=""
+            aria-describedby="helpId"
+            placeholder="Nhập tên nhân viên"
+            v-model="fullName"
+          />
+        </div>
+        <div class="form-group">
+          <label for="">CDSID</label>
+          <input
+            type="text"
+            class="form-control"
+            name="fordCardID"
+            id=""
+            aria-describedby="helpId"
+            placeholder="Nhập CDSID"
+            v-model="cdsid"
+          />
+        </div>
         <div class="form-group">
           <label for="">Ford card ID</label>
           <input
@@ -44,33 +67,15 @@
             v-model="fordCardID"
           />
         </div>
-        <!-- <div class="form-group">
-          <label for="">Biển số xe</label>
-          <input
-            type="text"
-            class="form-control"
-            name="licensePlate"
-            id=""
-            aria-describedby="helpId"
-            placeholder="Nhập biển số xe"
-            v-model="licensePlate"
-          />
-        </div>
-        <div class="form-group">
-          <label for="">Họ và tên</label>
-          <input
-            type="text"
-            class="form-control"
-            name="name"
-            id=""
-            aria-describedby="helpId"
-            placeholder="Nhập họ và tên"
-            v-model="name"
-          />
-        </div> -->
       </div>
       <div class="filter-action col-sm-2">
-        <div class="btn btn-secondary" @click="searchData">Xuất excel</div>
+        <div
+          class="btn btn-primary"
+          @click="exportToExcel"
+          style="margin-right: 10px"
+        >
+          Xuất excel
+        </div>
         <div
           class="btn btn-primary"
           @click="searchData"
@@ -102,16 +107,25 @@
         </thead>
         <tbody>
           <tr v-for="(item, key) in this.data" :key="item._doc._id">
-            <th scope="row" style="vertical-align:middle;text-align:center">{{ key }}</th>
+            <th scope="row" style="vertical-align: middle; text-align: center">
+              {{ key }}
+            </th>
             <td></td>
-            <td style="vertical-align:middle">
+            <td style="vertical-align: middle">
               <ul>
-                <li>Ford Card ID:<strong>{{ item._doc.FordCardIDIn }}</strong> </li>
-                <li>CDSID: <strong>{{ item._doc.CdsidIn }}</strong></li>
-                <li>Full name: <strong>{{ item._doc.FullNameIn }}</strong></li>
-                <li>Department: <strong>{{ item._doc.DepartmentIn }}</strong></li>
+                <li>
+                  Ford Card ID:<strong>{{ item._doc.FordCardIDIn }}</strong>
+                </li>
+                <li>
+                  CDSID: <strong>{{ item._doc.CdsidIn }}</strong>
+                </li>
+                <li>
+                  Full name: <strong>{{ item._doc.FullNameIn }}</strong>
+                </li>
+                <li>
+                  Department: <strong>{{ item._doc.DepartmentIn }}</strong>
+                </li>
               </ul>
-              
             </td>
             <td colspan="2">
               <div class="data-top">
@@ -157,11 +171,21 @@
                 <div v-else>Không có</div>
               </div>
             </td>
-            <td>{{item._doc.RootCause}}</td>
-            <td>{{item._doc.ActionNote}}</td>
+            <td>{{ item._doc.RootCause }}</td>
+            <td>{{ item._doc.ActionNote }}</td>
             <td class="td-handle">
               <div class="row-handle-group">
-                <div class="btn-handle" data-action="o-pop" @click = "openEdit(item._doc._id,item._doc.RootCause,item._doc.ActionNote)">
+                <div
+                  class="btn-handle"
+                  data-action="o-pop"
+                  @click="
+                    openEdit(
+                      item._doc._id,
+                      item._doc.RootCause,
+                      item._doc.ActionNote
+                    )
+                  "
+                >
                   <i class="fi fi-rr-edit" style="color: blue"></i>
                 </div>
                 <div class="btn-handle" data-action="c-pop">
@@ -169,6 +193,49 @@
                 </div>
               </div>
             </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table table-bordered" ref="myTable" style="display:none">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col" colspan="20" rowspan="1" style="">Chi tiết dữ liệu xe từ {{ getDatetime(startDateTime, "datetime") }} đến {{ getDatetime(endDateTime, "datetime") }}</th>
+          </tr>
+          <tr>
+            <th colspan="1" rowspan="1" style="vertical-align: middle ;font-weight:bold">No</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Type</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Ford Card ID</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Full name</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">CDSID</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Department</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Datetime In</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Datetime Out</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Image In</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Image Out</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Security confirmation</th>
+            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Note/Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, key) in this.data" :key="item._doc._id">
+            <td style="vertical-align: middle; text-align: center">
+              {{ key }}
+            </td>
+            <td ></td>
+            <td >{{ item._doc.FordCardIDIn }}</td>
+            <td >{{ item._doc.FullNameIn }}</td>
+            <td >{{ item._doc.CdsidIn }}</td>
+            <td >{{ item._doc.DepartmentIn }}</td>
+            <td>
+              {{ getDatetime(item._doc.DateTimeIn, "datetime") }}
+            </td>
+            <td>
+              {{ getDatetime(item._doc.DateTimeOut, "datetime") }}
+            </td>
+            <td>{{item._doc.ImageUrlIn}}</td>
+            <td>{{item._doc.ImageUrlOut}}</td>
+            <td>{{ item._doc.RootCause }}</td>
+            <td>{{ item._doc.ActionNote }}</td>
           </tr>
         </tbody>
       </table>
@@ -181,11 +248,18 @@ import api from "@/api";
 import moment from "moment-timezone";
 import { VueImageZoomer as ImageZoom } from "vue-image-zoomer";
 import ReportEdit from "@/views/modals/ReportEdit";
+import XLSX from 'xlsx';
+
 export default {
-  components: { ImageZoom,ReportEdit },
+  components: { ImageZoom, ReportEdit },
   data() {
     return {
       data: [],
+      fordCardID:null,
+      fullName:null,
+      cdsid:null,
+      department:null,
+      departmentOptions:[],
     };
   },
   setup() {
@@ -218,21 +292,43 @@ export default {
   },
   created() {
     this.searchData();
+    this.getDataDefault();
   },
   methods: {
-    async openEdit(pkid,confirm,note) {
+    exportToExcel() {
+      const table = this.$refs.myTable;
+      const ws = XLSX.utils.table_to_sheet(table);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      XLSX.writeFile(wb, `${this.getDatetime(new Date(), "file")}.xlsx`);
+    },
+    async openEdit(pkid, confirm, note) {
       try {
-        const result = await this.$refs.popup.open(pkid,confirm,note);
-        if(result){
-          this.searchData()
+        const result = await this.$refs.popup.open(pkid, confirm, note);
+        if (result) {
+          this.searchData();
         }
       } catch (error) {
         console.error("Error:", error);
       }
     },
+    async getDataDefault(){
+      
+      const response = await api.post("/data/getdepartmentdata");
+      this.departmentOptions = response.data.data.map((option) => ({
+          value: option,
+          label: option
+      }));
+    },
     async searchData() {
-      const fordCardID = this.fordCardID;
-      const response = await api.post("/data/getreportdata", { fordCardID });
+      const response = await api.post("/data/getreportdata", { 
+        fordCardID:this.fordCardID,
+        fullName:this.fullName,
+        cdsid : this.cdsid,
+        department : this.department,
+        startDateTime:this.startDateTime,
+        endDateTime:this.endDateTime
+      });
       if (response.status == 200) {
         this.data = response.data.data;
       }
@@ -251,8 +347,13 @@ export default {
 
       if (type == "date") {
         return `${year}-${month}-${day}`;
-      } else {
+      } else if(type=="time") {
         return `${hours}:${minutes}:${seconds}`;
+      }else if(type=="file"){
+        return `${hours}_${minutes}_${seconds}_${year}_${month}_${day}`;
+      }
+      else{
+        return `'${hours}:${minutes}:${seconds} ${year}/${month}/${day}`;
       }
     },
   },

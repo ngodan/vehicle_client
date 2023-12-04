@@ -4,6 +4,10 @@ module.exports = defineConfig({
   configureWebpack: {
     resolve: {
       extensions: ['.ts', '.js', '.vue', '.json'],
+      fallback: {
+        "crypto": require.resolve("crypto-browserify"),
+        "fs": false
+      }
     }
   }
 })
