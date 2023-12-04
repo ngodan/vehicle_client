@@ -1,4 +1,5 @@
 <template>
+  <ReportEdit ref="popup"></ReportEdit>
   <div class="layout-area p-20">
     <div class="layout-title">CHI TIẾT DỮ LIỆU HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
     <div class="layout-filter flex-wrap">
@@ -85,7 +86,7 @@
           <tr>
             <th colspan="1" rowspan="2">No</th>
             <th colspan="1" rowspan="2">Type</th>
-            <th colspan="1" rowspan="2">Ford card ID</th>
+            <th colspan="1" rowspan="2">Staff information</th>
             <th colspan="2" rowspan="1">Vehicle In</th>
             <th colspan="2" rowspan="1">Vehicle Out</th>
             <th colspan="1" rowspan="2">Security confirmation</th>
@@ -93,35 +94,43 @@
             <th colspan="1" rowspan="2">Handle</th>
           </tr>
           <tr>
-            <th scope="col" style="width:160px">Date</th>
-            <th scope="col" style="width:160px">Time</th>
-            <th scope="col" style="width:160px">Date</th>
-            <th scope="col" style="width:160px">Time</th>
+            <th scope="col" style="width: 160px">Date</th>
+            <th scope="col" style="width: 160px">Time</th>
+            <th scope="col" style="width: 160px">Date</th>
+            <th scope="col" style="width: 160px">Time</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(item, key) in this.data" :key="item._id">
-            <th scope="row">{{ key }}</th>
+          <tr v-for="(item, key) in this.data" :key="item._doc._id">
+            <th scope="row" style="vertical-align:middle;text-align:center">{{ key }}</th>
             <td></td>
-            <td>{{ item.FordCardIDIn }}</td>
+            <td style="vertical-align:middle">
+              <ul>
+                <li>Ford Card ID:<strong>{{ item._doc.FordCardIDIn }}</strong> </li>
+                <li>CDSID: <strong>{{ item._doc.CdsidIn }}</strong></li>
+                <li>Full name: <strong>{{ item._doc.FullNameIn }}</strong></li>
+                <li>Department: <strong>{{ item._doc.DepartmentIn }}</strong></li>
+              </ul>
+              
+            </td>
             <td colspan="2">
               <div class="data-top">
                 <div class="data-top__item">
-                  {{ getDatetime(item.DateTimeIn, "date") }}
+                  {{ getDatetime(item._doc.DateTimeIn, "date") }}
                 </div>
                 <div class="data-top__item">
-                  {{ getDatetime(item.DateTimeIn, "time") }}
+                  {{ getDatetime(item._doc.DateTimeIn, "time") }}
                 </div>
               </div>
               <div class="data-bottom">
                 <ImageZoom
-                  v-if="item.ImageUrlIn != null"
-                  :regular="item.ImageUrlIn"
-                  :zoom="item.ImageUrlIn"
+                  v-if="item._doc.ImageUrlIn != null"
+                  :regular="item._doc.ImageUrlIn"
+                  :zoom="item._doc.ImageUrlIn"
                   :zoom-amount="2"
                   :click-zoom="true"
                 >
-                  <img :src="item.ImageUrlIn" alt="" />
+                  <img :src="item._doc.ImageUrlIn" alt="" />
                 </ImageZoom>
                 <div v-else>Không có</div>
               </div>
@@ -129,30 +138,30 @@
             <td colspan="2">
               <div class="data-top">
                 <div class="data-top__item">
-                  {{ getDatetime(item.DateTimeOut, "date") }}
+                  {{ getDatetime(item._doc.DateTimeOut, "date") }}
                 </div>
                 <div class="data-top__item">
-                  {{ getDatetime(item.DateTimeOut, "time") }}
+                  {{ getDatetime(item._doc.DateTimeOut, "time") }}
                 </div>
               </div>
               <div class="data-bottom">
                 <ImageZoom
-                  v-if="item.ImageUrlOut != null"
-                  :regular="item.ImageUrlOut"
-                  :zoom="item.ImageUrlOut"
+                  v-if="item._doc.ImageUrlOut != null"
+                  :regular="item._doc.ImageUrlOut"
+                  :zoom="item._doc.ImageUrlOut"
                   :zoom-amount="2"
                   :click-zoom="true"
                 >
-                  <img :src="item.ImageUrlOut" alt="" />
+                  <img :src="item._doc.ImageUrlOut" alt="" />
                 </ImageZoom>
                 <div v-else>Không có</div>
               </div>
             </td>
-            <td>Description 7</td>
-            <td>Description 7</td>
+            <td>{{item._doc.RootCause}}</td>
+            <td>{{item._doc.ActionNote}}</td>
             <td class="td-handle">
               <div class="row-handle-group">
-                <div class="btn-handle" data-action="o-pop">
+                <div class="btn-handle" data-action="o-pop" @click = "openEdit(item._doc._id,item._doc.RootCause,item._doc.ActionNote)">
                   <i class="fi fi-rr-edit" style="color: blue"></i>
                 </div>
                 <div class="btn-handle" data-action="c-pop">
@@ -170,9 +179,10 @@
 import { ref } from "vue";
 import api from "@/api";
 import moment from "moment-timezone";
-import { VueImageZoomer as ImageZoom } from 'vue-image-zoomer';
+import { VueImageZoomer as ImageZoom } from "vue-image-zoomer";
+import ReportEdit from "@/views/modals/ReportEdit";
 export default {
-  components: {ImageZoom},
+  components: { ImageZoom,ReportEdit },
   data() {
     return {
       data: [],
@@ -206,10 +216,20 @@ export default {
       endDateTime,
     };
   },
-  created(){
+  created() {
     this.searchData();
   },
   methods: {
+    async openEdit(pkid,confirm,note) {
+      try {
+        const result = await this.$refs.popup.open(pkid,confirm,note);
+        if(result){
+          this.searchData()
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
     async searchData() {
       const fordCardID = this.fordCardID;
       const response = await api.post("/data/getreportdata", { fordCardID });

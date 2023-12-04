@@ -41,12 +41,12 @@
           <div class="item-content flex-grap">
             <div class="col-sm-7 content-detail">
               <ImageZoom 
-                :regular="lane.laneIn.imageUrl" 
-                :zoom="lane.laneIn.imageUrl"
+                :regular="lane.LaneIn.ImageUrlIn" 
+                :zoom="lane.LaneIn.ImageUrlIn"
                 :zoom-amount="2"
                 :click-zoom="true"			
                 >
-                <img :src="lane.laneIn.imageUrl" />
+                <img :src="lane.LaneIn.ImageUrlIn" />
               </ImageZoom>
             </div>
             <div class="col-sm-5 content-detail flex-grap">
@@ -60,12 +60,12 @@
                   font-weight: bold;
                 "
               >
-                <div class="col-sm-12">{{ lane.laneIn.licensePlate }}</div>
+                <div class="col-sm-12">{{ lane.LaneIn.LicensePlateIn }}</div>
               </div>
               <div class="detail-bottom col-sm-12">                      
-                <div class="col-sm-12">CDSID: <strong>{{ lane.laneIn.csid }}</strong></div>
-                <div class="col-sm-12">Họ và tên: <strong>{{ lane.laneIn.fullName }}</strong></div>
-                <div class="col-sm-12">Phòng ban: <strong>{{ lane.laneIn.department }}</strong></div>
+                <div class="col-sm-12">CDSID: <strong>{{ lane.LaneIn.CdsidIn }}</strong></div>
+                <div class="col-sm-12">Họ và tên: <strong>{{ lane.LaneIn.FullNameIn }}</strong></div>
+                <div class="col-sm-12">Phòng ban: <strong>{{ lane.LaneIn.DepartmentIn }}</strong></div>
               </div>
             </div>
           </div>
@@ -78,47 +78,47 @@
             <div class="col-sm-6 content-detail">
               <div class="detail-top col-sm-12">
                 <ImageZoom 
-                  :regular="lane.laneOut.imageUrlIn" 
-                  :zoom="lane.laneOut.imageUrlIn"
+                  :regular="lane.LaneOut.ImageUrlIn" 
+                  :zoom="lane.LaneOut.ImageUrlIn"
                   :zoom-amount="2"
                   :click-zoom="true"			
                   >
-                  <img :src="lane.laneOut.imageUrlIn" alt="" />
+                  <img :src="lane.LaneOut.ImageUrlIn" alt="" />
                 </ImageZoom>
                 
               </div>
               <div class="detail-bottom col-sm-12 text-center">
-                <div><strong>{{lane.laneOut.licensePlateIn}}</strong></div>
+                <div><strong>{{lane.LaneOut.LicensePlateIn}}</strong></div>
               </div>
             </div>
             <div class="col-sm-6 content-detail">
               <div class="detail-top col-sm-12">
                 <ImageZoom 
-                  :regular="lane.laneOut.imageUrlOut" 
-                  :zoom="lane.laneOut.imageUrlOut"
+                  :regular="lane.LaneOut.ImageUrlOut" 
+                  :zoom="lane.LaneOut.ImageUrlOut"
                   :zoom-amount="2"
                   :click-zoom="true"			
                   >
-                  <img :src="lane.laneOut.imageUrlOut" alt="" />
+                  <img :src="lane.LaneOut.ImageUrlOut" alt="" />
                 </ImageZoom>
               </div>
               <div class="detail-bottom col-sm-12 text-center">
-                <div><strong>{{lane.laneOut.licensePlateOut}}</strong></div>
+                <div><strong>{{lane.LaneOut.LicensePlateOut}}</strong></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="grid-item__footer" :style="{ 'background-color': (lane.laneOut.status == 0 && lane.laneOut.status != null && lane.laneOut.status.toUpperCase() !== 'OK') ? 'red' : 'aqua' }">
+        <div class="grid-item__footer" :style="{ 'background-color': ( lane.LaneOut.IsEdit !==2 && lane.LaneOut.Status != null && lane.LaneOut.Status.toUpperCase() !== 'OK') ? 'red' : 'aqua' }">
           <div class="footer-item">
-            <p v-if="lane.laneOut.dateTimeIn!=='' && lane.laneOut.dateTimeIn!= null">
-              OUT:{{lane.laneOut.dateTimeOut}} - IN:{{lane.laneOut.dateTimeIn}} 
+            <p v-if="lane.LaneOut.DateTimeIn!=='' && lane.LaneOut.DateTimeIn!= null">
+              OUT:{{lane.LaneOut.DateTimeOut}} - IN:{{lane.LaneOut.DateTimeIn}} 
               <br>
-              {{ lane.laneOut.fullNameOut}} - {{ lane.laneOut.departmentOut}}
+              {{ lane.LaneOut.FullNameOut}} - {{ lane.LaneOut.DepartmentOut}}
             </p>
           </div>
-          <div class="group-button" v-if="(lane.laneOut.status == 0) && (lane.laneOut.status != null && lane.laneOut.status.toUpperCase() !== 'OK') && (lane.laneOut.pkid !== null && lane.laneOut.pkid != '')">
-            <button class="btn btn-secondary btn-status"  @click="openPopupSetEdit(lane.laneOut.pkid)">Hậu kiểm</button>
-            <button class="btn btn-success btn-status"  @click="openPopupSetStatus(lane.laneOut.pkid)">Đã kiểm</button>
+          <div class="group-button" v-if="(lane.LaneOut.IsEdit !==2 && lane.LaneOut.Status != null && lane.LaneOut.Status.toUpperCase() !== 'OK') && (lane.LaneOut.pkid !== null && lane.LaneOut.pkid != '')">
+            <button class="btn btn-secondary btn-status"  @click="openPopupSetEdit(lane.LaneOut.pkid)">Hậu kiểm</button>
+            <button class="btn btn-success btn-status"  @click="openPopupSetStatus(lane.LaneOut.pkid)">Đã kiểm</button>
           </div>
           <div class="group-button" v-else>
             <button class="btn btn-secondary btn-status" disabled>Hậu kiểm</button>
@@ -135,7 +135,7 @@ import api from "@/api";
 import io from "socket.io-client";
 import { VueImageZoomer as ImageZoom } from 'vue-image-zoomer';
 import modalQuestion from "@/views/modals/questionPopup";
-
+import { serverIP } from '@/configs/configDefault';
 export default {
   components:{
     ImageZoom,
@@ -195,11 +195,13 @@ export default {
       }
     },
     connectSocket(){
-      const socket = io("http://192.168.2.200:8800");
+      const socket = io(serverIP);
       socket.on("dataUpdate", (data) => {
-        const laneIndex = this.lanes.findIndex((lane) => lane.id === data.laneID);
-          if (laneIndex !== -1) {
-            this.lanes[laneIndex] = { ...this.lanes[laneIndex], ...data };
+        
+        const LaneIndex = this.lanes.findIndex((lane) => lane.id === data.LaneID);
+        console.log(data)
+          if (LaneIndex !== -1) {
+            this.lanes[LaneIndex] = { ...this.lanes[LaneIndex], ...data };
           }
       });
       socket.emit("sendData");
@@ -210,40 +212,41 @@ export default {
             id: i,
             titleTop:`Làn vào ${i}`,
             titleBottom:`Làn ra ${i}`,
-            laneIn:{
-              imageUrl:"/assets/images/default.jpg",
-              licensePlate:"--Biển số xe--",
-              csid:"--Mã nhân viên--",
-              fullName:"--Tên nhân viên rất dài--",
-              department:"--Phòng ban--"
+            LaneIn:{
+              ImageUrlIn:"/assets/images/default.jpg",
+              LicensePlateIn:"--Biển số xe--",
+              CdsidIn:"--Mã nhân viên--",
+              FullNameIn:"--Tên nhân viên rất dài--",
+              DepartmentIn:"--Phòng ban--"
             },
-            laneOut:{
+            LaneOut:{
               pkid:'',
-              imageUrlIn:"/assets/images/default.jpg",
-              imageUrlOut:"/assets/images/default.jpg",
-              licensePlateIn:"--Biển số xe--",
-              licensePlateOut:"--Biển số xe--",
-              dateTimeIn:'',
-              dateTimeOut:'',
-              csidIn:"--Mã nhân viên--",
-              fullNameIn:"--Tên nhân viên--",
-              departmentIn:"--Phòng ban--",
-              csidOut:"--Mã nhân viên--",
-              fullNameOut:"--Tên nhân viên--",
-              departmentOut:"--Phòng ban--",
-              status:"Ok",
-              isEdit:0,
+              ImageUrlIn:"/assets/images/default.jpg",
+              ImageUrlOut:"/assets/images/default.jpg",
+              LicensePlateIn:"--Biển số xe--",
+              LicensePlateOut:"--Biển số xe--",
+              DateTimeIn:'',
+              DateTimeOut:'',
+              CdsidIn:"--Mã nhân viên--",
+              FullNameIn:"--Tên nhân viên--",
+              DepartmentIn:"--Phòng ban--",
+              CdsidOut:"--Mã nhân viên--",
+              FullNameOut:"--Tên nhân viên--",
+              DepartmentOut:"--Phòng ban--",
+              Status:"Ok",
+              IsEdit:0,
             }
           })
         }
       const response = await api.post("/data/getdefault");
+      
       if(response.status == 200){
         const dataResult = response.data.data
         if(dataResult.length > 0){
           dataResult.forEach(element => {
-            const laneIndex = this.lanes.findIndex((lane) => lane.id === element.laneID);
-            if (laneIndex !== -1) {
-              this.lanes[laneIndex] = { ...this.lanes[laneIndex], ...element };
+            const LaneIndex = this.lanes.findIndex((lane) => lane.id === element.LaneID);
+            if (LaneIndex !== -1) {
+              this.lanes[LaneIndex] = { ...this.lanes[LaneIndex], ...element };
             }
           });
         }
