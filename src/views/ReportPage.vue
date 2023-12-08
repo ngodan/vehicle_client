@@ -139,8 +139,8 @@
           </tr>
         </thead>
 
-        <tbody>
-          <tr v-for="(item, key) in this.data" :key="item._doc._id">
+        <tbody v-if="!loading">
+          <tr  v-for="(item, key) in this.data" :key="item._doc._id">
             <th
               scope="row"
               style="vertical-align: middle; text-align: center; width: 3%"
