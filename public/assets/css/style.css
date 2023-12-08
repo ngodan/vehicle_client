@@ -850,3 +850,8 @@ table#table-export tbody tr td ul li {
     justify-content: center;
     background: #fff;
 }
+a.btn.btn-primary.btn-back {
+    position: absolute;
+    top: 43px;
+    left: 40px;
+}

@@ -1,6 +1,7 @@
 <template>
   <ReportEdit ref="popup"></ReportEdit>
   <div class="layout-area p-20">
+    <a href="/" class="btn btn-primary btn-back ">Quay về trang chủ </a>
     <div class="layout-title">CHI TIẾT DỮ LIỆU HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
     <div class="layout-filter flex-wrap">
       <div class="filter-group flex-wrap col-sm-10">
