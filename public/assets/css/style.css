@@ -692,7 +692,7 @@ td ul li {
 
 .table-main tbody {
     display: block;
-    max-height: 540px;
+    max-height: 630px;
     overflow-x: hidden;
     overflow-y: auto;
     position: relative;
