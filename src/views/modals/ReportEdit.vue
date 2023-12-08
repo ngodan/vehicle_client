@@ -3,6 +3,16 @@
     <div class="popup-container">
       <div class="popup-content">
         <p class="title">Thay đổi dữ liệu</p>
+        <div class="form-group col-sm-12">
+          <label for="">Dạng lỗi</label>
+          <select class="form-control" name="typeError" v-model="typeError" id="">
+            <option value="">Chọn loại lỗi</option>
+            <option value="Lỗi nhận diện sai">Lỗi nhận diện sai</option>
+            <option value="Lỗi biển">Lỗi biển</option>
+            <option value="Lỗi ánh sáng">Lỗi ánh sáng</option>
+            <option value="Lỗi con người">Lỗi con người</option>
+          </select>
+        </div>
         <div class="form-group">
           <label for="">Mô tả chi tiết</label>
           <textarea class="form-control" name="confirm" id="" rows="3" v-model="confirm"></textarea>
@@ -18,7 +28,7 @@
             <div class="slider round"></div>
           </label>
         </div>
-       
+        
         <button class="btn btn-success " @click="saveDocument">Save</button>
         <button class="btn btn-danger " @click="handleCancel">Cancel</button>
       </div>
@@ -36,6 +46,7 @@ export default {
       confirm: "",
       pkid:"",
       status:"",
+      typeError:"",
       resolveFunction: null,
       rejectFunction: null,
     };
@@ -45,20 +56,21 @@ export default {
       this.status = event.target.checked ? "OK" : "NOK";
       
     },
-    open(pkid,confirm,note,status) {
+    open(pkid,confirm,note,status,typeError) {
       this.isVisible = true;
       this.confirm = confirm;
       this.note = note;
       this.pkid = pkid;
-      this.status = status
-      console.log(this.status)
+      this.status = status;
+      this.typeError = typeError;
+      console.log(typeError)
       return new Promise((resolve, reject) => {
         this.resolveFunction = resolve;
         this.rejectFunction = reject;
       });
     },
     async saveDocument() {
-      var result = await api.post("/data/setnote", { pkid: this.pkid,confirm:this.confirm,note:this.note,status:this.status });
+      var result = await api.post("/data/setnote", { pkid: this.pkid,confirm:this.confirm,note:this.note,status:this.status,typeError:this.typeError });
       if(result.status == 200){
         this.isVisible = false;
         this.resolveFunction(true);

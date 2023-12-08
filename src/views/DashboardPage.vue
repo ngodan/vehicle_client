@@ -132,11 +132,12 @@
                 lane.LaneOut.DateTimeIn != null
               "
             >
-              OUT:{{ lane.LaneOut.DateTimeOut }} - IN:{{
-                lane.LaneOut.DateTimeIn
-              }}
+              IN:{{lane.LaneOut.DateTimeIn }}
+               || OUT:{{lane.LaneOut.DateTimeOut }}  
               <br />
-              {{ lane.LaneOut.FullNameOut }} - {{ lane.LaneOut.DepartmentOut }}
+
+              IN: {{ lane.LaneOut.FullNameIn }} - {{ lane.LaneOut.DepartmentIn }} ||
+              OUT: {{ lane.LaneOut.FullNameOut }} - {{ lane.LaneOut.DepartmentOut }}
             </p>
           </div>
           <div

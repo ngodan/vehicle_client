@@ -223,7 +223,8 @@
                       item._doc._id,
                       item._doc.Rootcause,
                       item._doc.Action,
-                      item._doc.Status
+                      item._doc.Status,
+                      item._doc.TypeOfError
                     )
                   "
                 >
@@ -423,9 +424,9 @@ export default {
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
       XLSX.writeFile(wb, `${this.getDatetime(new Date(), "file")}.xlsx`);
     },
-    async openEdit(pkid, confirm, note, status) {
+    async openEdit(pkid, confirm, note, status,typeError) {
       try {
-        const result = await this.$refs.popup.open(pkid, confirm, note, status);
+        const result = await this.$refs.popup.open(pkid, confirm, note, status,typeError);
         if (result) {
           this.searchData();
         }
