@@ -441,6 +441,7 @@ export default {
       }));
     },
     async searchData() {
+      this.loading = true; 
       try {
         const response = await api.post("/data/getreportdata", {
           fordCardID: this.fordCardID,
