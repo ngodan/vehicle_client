@@ -26,9 +26,16 @@
         </div>
         <div class="form-group col-sm-1">
           <label for="">Bộ phận</label>
-          <select class="form-control" name="department" v-model="department" id="">
+          <select
+            class="form-control"
+            name="department"
+            v-model="department"
+            id=""
+          >
             <option value="" selected>Chọn bộ phận</option>
-            <option v-for="option in departmentOptions" :key="option.value">{{ option.label }}</option>
+            <option v-for="option in departmentOptions" :key="option.value">
+              {{ option.label }}
+            </option>
           </select>
         </div>
         <div class="form-group">
@@ -102,17 +109,27 @@
       </div>
     </div>
     <div class="layout-content">
+      <div v-if="loading" class="loading-indicator">
+        <div class="lds-ring">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
       <table class="table table-bordered table-main">
         <thead class="thead-light">
           <tr>
-            <th colspan="1" rowspan="2" style="width:3%">STT</th>
-            <th colspan="1" rowspan="2" style="width:7%">Loại</th>
-            <th colspan="1" rowspan="2" style="width:15%">Thông tin nhân viên</th>
-            <th colspan="2" rowspan="1" style="width:23%">Thông tin vào</th>
-            <th colspan="2" rowspan="1" style="width:23%">Thông tin ra</th>
-            <th colspan="1" rowspan="2" style="width:12%" >Nguyên nhân</th>
-            <th colspan="1" rowspan="2" style="width:12%">Hành động</th>
-            <th colspan="1" rowspan="2"  style="width:5%">Thao tác</th>
+            <th colspan="1" rowspan="2" style="width: 3%">STT</th>
+            <th colspan="1" rowspan="2" style="width: 7%">Loại</th>
+            <th colspan="1" rowspan="2" style="width: 15%">
+              Thông tin nhân viên
+            </th>
+            <th colspan="2" rowspan="1" style="width: 23%">Thông tin vào</th>
+            <th colspan="2" rowspan="1" style="width: 23%">Thông tin ra</th>
+            <th colspan="1" rowspan="2" style="width: 12%">Nguyên nhân</th>
+            <th colspan="1" rowspan="2" style="width: 12%">Hành động</th>
+            <th colspan="1" rowspan="2" style="width: 5%">Thao tác</th>
           </tr>
           <tr>
             <th scope="col" style="width: 160px">Ngày</th>
@@ -121,13 +138,17 @@
             <th scope="col" style="width: 160px">Giờ</th>
           </tr>
         </thead>
+
         <tbody>
           <tr v-for="(item, key) in this.data" :key="item._doc._id">
-            <th  scope="row" style="vertical-align: middle; text-align: center;width:3%">
+            <th
+              scope="row"
+              style="vertical-align: middle; text-align: center; width: 3%"
+            >
               {{ key + 1 }}
             </th>
-            <td style="width:7%"></td>
-            <td style="vertical-align: middle ;width:15%">
+            <td style="width: 7%"></td>
+            <td style="vertical-align: middle; width: 15%">
               <ul>
                 <li>
                   Ford Card ID:<strong>{{ item._doc.FordCardIDIn }}</strong>
@@ -143,7 +164,7 @@
                 </li>
               </ul>
             </td>
-            <td colspan="2" style="width:23%">
+            <td colspan="2" style="width: 23%">
               <div class="data-top">
                 <div class="data-top__item">
                   {{ getDatetime(item._doc.DateTimeIn, "date") }}
@@ -165,7 +186,7 @@
                 <div v-else>Không có</div>
               </div>
             </td>
-            <td colspan="2" style="width:23%">
+            <td colspan="2" style="width: 23%">
               <div class="data-top">
                 <div class="data-top__item">
                   {{ getDatetime(item._doc.DateTimeOut, "date") }}
@@ -187,9 +208,12 @@
                 <div v-else>Không có</div>
               </div>
             </td>
-            <td style="width:12%">{{ item._doc.Rootcause }}</td>
-            <td style="width:12%">{{ item._doc.Action }}</td>
-            <td class="td-handle" style="width:5%; vertical-align: middle;text-align:center ">
+            <td style="width: 12%">{{ item._doc.Rootcause }}</td>
+            <td style="width: 12%">{{ item._doc.Action }}</td>
+            <td
+              class="td-handle"
+              style="width: 5%; vertical-align: middle; text-align: center"
+            >
               <div class="row-handle-group">
                 <div
                   class="btn-handle"
@@ -209,26 +233,104 @@
             </td>
           </tr>
         </tbody>
-        <p><strong>Có {{totalRecords}} dữ liệu được tìm thấy</strong></p>
+        <p>
+          <strong>Có {{ totalRecords }} dữ liệu được tìm thấy</strong>
+        </p>
       </table>
-      <table class="table table-bordered" ref="myTable" style="display:none">
+      <table class="table table-bordered" ref="myTable" style="display: none">
         <thead class="thead-light">
           <tr>
-            <th scope="col" colspan="20" rowspan="1" style="">Chi tiết dữ liệu xe từ {{ getDatetime(startDateTime, "datetime") }} đến {{ getDatetime(endDateTime, "datetime") }}</th>
+            <th scope="col" colspan="20" rowspan="1" style="">
+              Chi tiết dữ liệu xe từ
+              {{ getDatetime(startDateTime, "datetime") }} đến
+              {{ getDatetime(endDateTime, "datetime") }}
+            </th>
           </tr>
           <tr>
-            <th colspan="1" rowspan="1" style="vertical-align: middle ;font-weight:bold">No</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Type</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Ford Card ID</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Full name</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">CDSID</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Department</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Datetime In</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Datetime Out</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Image In</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Vehicle Image Out</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Security confirmation</th>
-            <th colspan="1" rowspan="1" style="vertical-align: middle;font-weight:bold">Note/Action</th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              No
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Type
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Ford Card ID
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Full name
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              CDSID
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Department
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Vehicle Datetime In
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Vehicle Datetime Out
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Vehicle Image In
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Vehicle Image Out
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Security confirmation
+            </th>
+            <th
+              colspan="1"
+              rowspan="1"
+              style="vertical-align: middle; font-weight: bold"
+            >
+              Note/Action
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -236,19 +338,19 @@
             <td style="vertical-align: middle; text-align: center">
               {{ key }}
             </td>
-            <td ></td>
-            <td >{{ item._doc.FordCardIDIn }}</td>
-            <td >{{ item._doc.FullNameIn }}</td>
-            <td >{{ item._doc.CdsidIn }}</td>
-            <td >{{ item._doc.DepartmentIn }}</td>
+            <td></td>
+            <td>{{ item._doc.FordCardIDIn }}</td>
+            <td>{{ item._doc.FullNameIn }}</td>
+            <td>{{ item._doc.CdsidIn }}</td>
+            <td>{{ item._doc.DepartmentIn }}</td>
             <td>
               {{ getDatetime(item._doc.DateTimeIn, "datetime") }}
             </td>
             <td>
               {{ getDatetime(item._doc.DateTimeOut, "datetime") }}
             </td>
-            <td>{{item._doc.ImageIn}}</td>
-            <td>{{item._doc.ImageOut}}</td>
+            <td>{{ item._doc.ImageIn }}</td>
+            <td>{{ item._doc.ImageOut }}</td>
             <td>{{ item._doc.Rootcause }}</td>
             <td>{{ item._doc.Action }}</td>
           </tr>
@@ -263,21 +365,22 @@ import api from "@/api";
 import moment from "moment-timezone";
 import { VueImageZoomer as ImageZoom } from "vue-image-zoomer";
 import ReportEdit from "@/views/modals/ReportEdit";
-import XLSX from 'xlsx';
+import XLSX from "xlsx";
 
 export default {
   components: { ImageZoom, ReportEdit },
   data() {
     return {
       data: [],
-      fordCardID:null,
-      fullName:null,
-      cdsid:null,
-      department:'',
-      departmentOptions:[],
+      fordCardID: null,
+      fullName: null,
+      cdsid: null,
+      department: "",
+      departmentOptions: [],
       status: "NOK",
       check: 2,
-      totalRecords:0,
+      totalRecords: 0,
+      loading: false,
     };
   },
   setup() {
@@ -317,12 +420,12 @@ export default {
       const table = this.$refs.myTable;
       const ws = XLSX.utils.table_to_sheet(table);
       const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+      XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
       XLSX.writeFile(wb, `${this.getDatetime(new Date(), "file")}.xlsx`);
     },
-    async openEdit(pkid, confirm, note,status) {
+    async openEdit(pkid, confirm, note, status) {
       try {
-        const result = await this.$refs.popup.open(pkid, confirm, note,status);
+        const result = await this.$refs.popup.open(pkid, confirm, note, status);
         if (result) {
           this.searchData();
         }
@@ -330,28 +433,33 @@ export default {
         console.error("Error:", error);
       }
     },
-    async getDataDefault(){
-      
+    async getDataDefault() {
       const response = await api.post("/data/getdepartmentdata");
       this.departmentOptions = response.data.data.map((option) => ({
-          value: option,
-          label: option
+        value: option,
+        label: option,
       }));
     },
     async searchData() {
-      const response = await api.post("/data/getreportdata", { 
-        fordCardID:this.fordCardID,
-        fullName:this.fullName,
-        cdsid : this.cdsid,
-        department : this.department,
-        startDateTime:this.startDateTime,
-        endDateTime:this.endDateTime,
-        status:this.status,
-        check:this.check
-      });
-      if (response.status == 200) {
-        this.data = response.data.data;
-        this.totalRecords = this.data.length;
+      try {
+        const response = await api.post("/data/getreportdata", {
+          fordCardID: this.fordCardID,
+          fullName: this.fullName,
+          cdsid: this.cdsid,
+          department: this.department,
+          startDateTime: this.startDateTime,
+          endDateTime: this.endDateTime,
+          status: this.status,
+          check: this.check,
+        });
+        if (response.status == 200) {
+          this.data = response.data.data;
+          this.totalRecords = this.data.length;
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.loading = false; // Kết thúc loading, dù có lỗi hay không
       }
     },
     getDatetime(dateTimeString, type) {
@@ -368,12 +476,11 @@ export default {
 
       if (type == "date") {
         return `${year}-${month}-${day}`;
-      } else if(type=="time") {
+      } else if (type == "time") {
         return `${hours}:${minutes}:${seconds}`;
-      }else if(type=="file"){
+      } else if (type == "file") {
         return `${hours}_${minutes}_${seconds}_${year}_${month}_${day}`;
-      }
-      else{
+      } else {
         return `'${hours}:${minutes}:${seconds} ${year}/${month}/${day}`;
       }
     },
