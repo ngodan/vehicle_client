@@ -24,7 +24,7 @@
             v-model="endDateTime"
           />
         </div>
-        <div class="form-group col-sm-2">
+        <div class="form-group col-sm-1">
           <label for="">Bộ phận</label>
           <select class="form-control" name="department" v-model="department" id="">
             <option value="" selected>Chọn bộ phận</option>
@@ -43,7 +43,7 @@
             v-model="fullName"
           />
         </div>
-        <div class="form-group">
+        <div class="form-group col-sm-1">
           <label for="">CDSID</label>
           <input
             type="text"
@@ -55,7 +55,7 @@
             v-model="cdsid"
           />
         </div>
-        <div class="form-group">
+        <div class="form-group col-sm-1">
           <label for="">Ford card ID</label>
           <input
             type="text"
@@ -63,9 +63,25 @@
             name="fordCardID"
             id=""
             aria-describedby="helpId"
-            placeholder="Nhập Ford card ID"
+            placeholder="Nhập Ford ID"
             v-model="fordCardID"
           />
+        </div>
+        <div class="form-group col-sm-1">
+          <label for="">Dạng dữ liệu</label>
+          <select class="form-control" name="department" v-model="status" id="">
+            <option value="NOK" selected>NOK</option>
+            <option value="OK">OK</option>
+            <option value="ALL">Tất cả</option>
+          </select>
+        </div>
+        <div class="form-group col-sm-1">
+          <label for="">Dạng hành động</label>
+          <select class="form-control" name="department" v-model="check" id="">
+            <option value="2">Hậu kiểm</option>
+            <option value="1">Đã kiểm</option>
+            <option value="0">Tất cả</option>
+          </select>
         </div>
       </div>
       <div class="filter-action col-sm-2">
@@ -86,32 +102,32 @@
       </div>
     </div>
     <div class="layout-content">
-      <table class="table table-bordered">
+      <table class="table table-bordered table-main">
         <thead class="thead-light">
           <tr>
-            <th colspan="1" rowspan="2">No</th>
-            <th colspan="1" rowspan="2">Type</th>
-            <th colspan="1" rowspan="2">Staff information</th>
-            <th colspan="2" rowspan="1">Vehicle In</th>
-            <th colspan="2" rowspan="1">Vehicle Out</th>
-            <th colspan="1" rowspan="2">Security confirmation</th>
-            <th colspan="1" rowspan="2">Note/Action</th>
-            <th colspan="1" rowspan="2">Handle</th>
+            <th colspan="1" rowspan="2" style="width:3%">STT</th>
+            <th colspan="1" rowspan="2" style="width:7%">Loại</th>
+            <th colspan="1" rowspan="2" style="width:15%">Thông tin nhân viên</th>
+            <th colspan="2" rowspan="1" style="width:23%">Thông tin vào</th>
+            <th colspan="2" rowspan="1" style="width:23%">Thông tin ra</th>
+            <th colspan="1" rowspan="2" style="width:12%" >Nguyên nhân</th>
+            <th colspan="1" rowspan="2" style="width:12%">Hành động</th>
+            <th colspan="1" rowspan="2"  style="width:5%">Thao tác</th>
           </tr>
           <tr>
-            <th scope="col" style="width: 160px">Date</th>
-            <th scope="col" style="width: 160px">Time</th>
-            <th scope="col" style="width: 160px">Date</th>
-            <th scope="col" style="width: 160px">Time</th>
+            <th scope="col" style="width: 160px">Ngày</th>
+            <th scope="col" style="width: 160px">Giờ</th>
+            <th scope="col" style="width: 160px">Ngày</th>
+            <th scope="col" style="width: 160px">Giờ</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, key) in this.data" :key="item._doc._id">
-            <th scope="row" style="vertical-align: middle; text-align: center">
-              {{ key }}
+            <th  scope="row" style="vertical-align: middle; text-align: center;width:3%">
+              {{ key + 1 }}
             </th>
-            <td></td>
-            <td style="vertical-align: middle">
+            <td style="width:7%"></td>
+            <td style="vertical-align: middle ;width:15%">
               <ul>
                 <li>
                   Ford Card ID:<strong>{{ item._doc.FordCardIDIn }}</strong>
@@ -127,7 +143,7 @@
                 </li>
               </ul>
             </td>
-            <td colspan="2">
+            <td colspan="2" style="width:23%">
               <div class="data-top">
                 <div class="data-top__item">
                   {{ getDatetime(item._doc.DateTimeIn, "date") }}
@@ -138,18 +154,18 @@
               </div>
               <div class="data-bottom">
                 <ImageZoom
-                  v-if="item._doc.ImageUrlIn != null"
-                  :regular="item._doc.ImageUrlIn"
-                  :zoom="item._doc.ImageUrlIn"
+                  v-if="item._doc.ImageIn != null"
+                  :regular="item._doc.ImageIn"
+                  :zoom="item._doc.ImageIn"
                   :zoom-amount="2"
                   :click-zoom="true"
                 >
-                  <img :src="item._doc.ImageUrlIn" alt="" />
+                  <img :src="item._doc.ImageIn" alt="" />
                 </ImageZoom>
                 <div v-else>Không có</div>
               </div>
             </td>
-            <td colspan="2">
+            <td colspan="2" style="width:23%">
               <div class="data-top">
                 <div class="data-top__item">
                   {{ getDatetime(item._doc.DateTimeOut, "date") }}
@@ -160,20 +176,20 @@
               </div>
               <div class="data-bottom">
                 <ImageZoom
-                  v-if="item._doc.ImageUrlOut != null"
-                  :regular="item._doc.ImageUrlOut"
-                  :zoom="item._doc.ImageUrlOut"
+                  v-if="item._doc.ImageOut != null"
+                  :regular="item._doc.ImageOut"
+                  :zoom="item._doc.ImageOut"
                   :zoom-amount="2"
                   :click-zoom="true"
                 >
-                  <img :src="item._doc.ImageUrlOut" alt="" />
+                  <img :src="item._doc.ImageOut" alt="" />
                 </ImageZoom>
                 <div v-else>Không có</div>
               </div>
             </td>
-            <td>{{ item._doc.RootCause }}</td>
-            <td>{{ item._doc.ActionNote }}</td>
-            <td class="td-handle">
+            <td style="width:12%">{{ item._doc.Rootcause }}</td>
+            <td style="width:12%">{{ item._doc.Action }}</td>
+            <td class="td-handle" style="width:5%; vertical-align: middle;text-align:center ">
               <div class="row-handle-group">
                 <div
                   class="btn-handle"
@@ -181,20 +197,19 @@
                   @click="
                     openEdit(
                       item._doc._id,
-                      item._doc.RootCause,
-                      item._doc.ActionNote
+                      item._doc.Rootcause,
+                      item._doc.Action,
+                      item._doc.Status
                     )
                   "
                 >
                   <i class="fi fi-rr-edit" style="color: blue"></i>
                 </div>
-                <div class="btn-handle" data-action="c-pop">
-                  <i class="fi fi-rr-trash" style="color: red"></i>
-                </div>
               </div>
             </td>
           </tr>
         </tbody>
+        <p><strong>Có {{totalRecords}} dữ liệu được tìm thấy</strong></p>
       </table>
       <table class="table table-bordered" ref="myTable" style="display:none">
         <thead class="thead-light">
@@ -232,10 +247,10 @@
             <td>
               {{ getDatetime(item._doc.DateTimeOut, "datetime") }}
             </td>
-            <td>{{item._doc.ImageUrlIn}}</td>
-            <td>{{item._doc.ImageUrlOut}}</td>
-            <td>{{ item._doc.RootCause }}</td>
-            <td>{{ item._doc.ActionNote }}</td>
+            <td>{{item._doc.ImageIn}}</td>
+            <td>{{item._doc.ImageOut}}</td>
+            <td>{{ item._doc.Rootcause }}</td>
+            <td>{{ item._doc.Action }}</td>
           </tr>
         </tbody>
       </table>
@@ -258,8 +273,11 @@ export default {
       fordCardID:null,
       fullName:null,
       cdsid:null,
-      department:null,
+      department:'',
       departmentOptions:[],
+      status: "NOK",
+      check: 2,
+      totalRecords:0,
     };
   },
   setup() {
@@ -302,9 +320,9 @@ export default {
       XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
       XLSX.writeFile(wb, `${this.getDatetime(new Date(), "file")}.xlsx`);
     },
-    async openEdit(pkid, confirm, note) {
+    async openEdit(pkid, confirm, note,status) {
       try {
-        const result = await this.$refs.popup.open(pkid, confirm, note);
+        const result = await this.$refs.popup.open(pkid, confirm, note,status);
         if (result) {
           this.searchData();
         }
@@ -327,10 +345,13 @@ export default {
         cdsid : this.cdsid,
         department : this.department,
         startDateTime:this.startDateTime,
-        endDateTime:this.endDateTime
+        endDateTime:this.endDateTime,
+        status:this.status,
+        check:this.check
       });
       if (response.status == 200) {
         this.data = response.data.data;
+        this.totalRecords = this.data.length;
       }
     },
     getDatetime(dateTimeString, type) {

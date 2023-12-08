@@ -22,32 +22,33 @@
         </div>
         <div class="grid-item__footer">
           <div class="footer-item col-sm-3">
-            <button class="btn-action btn btn-primary" @click="logout">Đăng xuất</button>
+            <button class="btn-action btn btn-primary" @click="logout">
+              Đăng xuất
+            </button>
           </div>
 
           <div class="footer-item col-sm-4">
             <div class="btn btn-success btn-action">Cài đặt</div>
           </div>
-          <a  href="/report" class="footer-item col-sm-5">
+          <a href="/report" class="footer-item col-sm-5">
             <div class="btn btn-primary btn-action">Hậu kiểm</div>
           </a>
         </div>
       </div>
-      <div v-for="lane in lanes" :key="lane.id" class="grid-item card lane-item" :data-lane="lane.id">
+      <div
+        v-for="lane in lanes"
+        :key="lane.id"
+        class="grid-item card lane-item"
+        :data-lane="lane.id"
+        @click="lane.zoom = true"
+      >
         <div class="grid-item__top">
           <div class="item-title col-sm-12">
-            <span>{{lane.titleTop}}</span>
+            <span>{{ lane.titleTop }}</span>
           </div>
           <div class="item-content flex-grap">
             <div class="col-sm-7 content-detail">
-              <ImageZoom 
-                :regular="lane.LaneIn.ImageUrlIn" 
-                :zoom="lane.LaneIn.ImageUrlIn"
-                :zoom-amount="2"
-                :click-zoom="true"			
-                >
-                <img :src="lane.LaneIn.ImageUrlIn" />
-              </ImageZoom>
+              <img :src="lane.LaneIn.ImageIn" />
             </div>
             <div class="col-sm-5 content-detail flex-grap">
               <div
@@ -62,66 +63,109 @@
               >
                 <div class="col-sm-12">{{ lane.LaneIn.LicensePlateIn }}</div>
               </div>
-              <div class="detail-bottom col-sm-12">                      
-                <div class="col-sm-12">CDSID: <strong>{{ lane.LaneIn.CdsidIn }}</strong></div>
-                <div class="col-sm-12">Họ và tên: <strong>{{ lane.LaneIn.FullNameIn }}</strong></div>
-                <div class="col-sm-12">Phòng ban: <strong>{{ lane.LaneIn.DepartmentIn }}</strong></div>
+              <div class="detail-bottom col-sm-12">
+                <div class="col-sm-12">
+                  CDSID: <strong>{{ lane.LaneIn.CdsidIn }}</strong>
+                </div>
+                <div class="col-sm-12">
+                  Họ và tên: <strong>{{ lane.LaneIn.FullNameIn }}</strong>
+                </div>
+                <div class="col-sm-12">
+                  Phòng ban: <strong>{{ lane.LaneIn.DepartmentIn }}</strong>
+                </div>
+                <div class="col-sm-12">
+                  Thời gian vào: <strong>{{ lane.LaneIn.DateTimeIn }}</strong>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="grid-item__bottom">
+        <div class="grid-item__bottom" :class="{ active: lane.zoom }">
+          <button
+            class="btn btn-primary btn-status btn-cancel-zoom"
+            @click="cancelZoom($event,lane)"
+          >
+            Thoát
+          </button>
           <div class="item-title col-sm-12">
-            <span>{{lane.titleBottom}}</span>
+            <span>{{ lane.titleBottom }}</span>
           </div>
           <div class="item-content flex-grap">
             <div class="col-sm-6 content-detail">
               <div class="detail-top col-sm-12">
-                <ImageZoom 
-                  :regular="lane.LaneOut.ImageUrlIn" 
-                  :zoom="lane.LaneOut.ImageUrlIn"
-                  :zoom-amount="2"
-                  :click-zoom="true"			
-                  >
-                  <img :src="lane.LaneOut.ImageUrlIn" alt="" />
-                </ImageZoom>
-                
+                <img :src="lane.LaneOut.ImageIn" alt="" />
               </div>
               <div class="detail-bottom col-sm-12 text-center">
-                <div><strong>{{lane.LaneOut.LicensePlateIn}}</strong></div>
+                <div>
+                  <strong>{{ lane.LaneOut.LicensePlateIn }}</strong>
+                </div>
               </div>
             </div>
             <div class="col-sm-6 content-detail">
               <div class="detail-top col-sm-12">
-                <ImageZoom 
-                  :regular="lane.LaneOut.ImageUrlOut" 
-                  :zoom="lane.LaneOut.ImageUrlOut"
-                  :zoom-amount="2"
-                  :click-zoom="true"			
-                  >
-                  <img :src="lane.LaneOut.ImageUrlOut" alt="" />
-                </ImageZoom>
+                <img :src="lane.LaneOut.ImageOut" alt="" />
               </div>
               <div class="detail-bottom col-sm-12 text-center">
-                <div><strong>{{lane.LaneOut.LicensePlateOut}}</strong></div>
+                <div>
+                  <strong>{{ lane.LaneOut.LicensePlateOut }}</strong>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="grid-item__footer" :style="{ 'background-color': ( lane.LaneOut.IsEdit !==2 && lane.LaneOut.Status != null && lane.LaneOut.Status.toUpperCase() !== 'OK') ? 'red' : 'aqua' }">
+        <div
+          class="grid-item__footer"
+          :class="{ active: lane.zoom }"
+          :style="{
+            'background-color':
+              lane.LaneOut.Check !== 2 &&
+              lane.LaneOut.Status != null &&
+              lane.LaneOut.Status.toUpperCase() !== 'OK'
+                ? 'red'
+                : 'aqua',
+          }"
+        >
           <div class="footer-item">
-            <p v-if="lane.LaneOut.DateTimeIn!=='' && lane.LaneOut.DateTimeIn!= null">
-              OUT:{{lane.LaneOut.DateTimeOut}} - IN:{{lane.LaneOut.DateTimeIn}} 
-              <br>
-              {{ lane.LaneOut.FullNameOut}} - {{ lane.LaneOut.DepartmentOut}}
+            <p
+              v-if="
+                lane.LaneOut.DateTimeIn !== '' &&
+                lane.LaneOut.DateTimeIn != null
+              "
+            >
+              OUT:{{ lane.LaneOut.DateTimeOut }} - IN:{{
+                lane.LaneOut.DateTimeIn
+              }}
+              <br />
+              {{ lane.LaneOut.FullNameOut }} - {{ lane.LaneOut.DepartmentOut }}
             </p>
           </div>
-          <div class="group-button" v-if="(lane.LaneOut.IsEdit !==2 && lane.LaneOut.Status != null && lane.LaneOut.Status.toUpperCase() !== 'OK') && (lane.LaneOut.pkid !== null && lane.LaneOut.pkid != '')">
-            <button class="btn btn-secondary btn-status"  @click="openPopupSetEdit(lane.LaneOut.pkid)">Hậu kiểm</button>
-            <button class="btn btn-success btn-status"  @click="openPopupSetStatus(lane.LaneOut.pkid)">Đã kiểm</button>
+          <div
+            class="group-button"
+            v-if="
+              lane.LaneOut.Check !== 2 &&
+              lane.LaneOut.Status != null &&
+              lane.LaneOut.Status.toUpperCase() !== 'OK' &&
+              lane.LaneOut.pkid !== null &&
+              lane.LaneOut.pkid != ''
+            "
+          >
+            <button
+              class="btn btn-secondary btn-status"
+              @click="openPopupSetEdit($event,lane.LaneOut.pkid)"
+            >
+              Hậu kiểm
+            </button>
+            <button
+              class="btn btn-success btn-status"
+              @click="openPopupSetStatus($event,lane.LaneOut.pkid)"
+            >
+              Đã kiểm
+            </button>
           </div>
           <div class="group-button" v-else>
-            <button class="btn btn-secondary btn-status" disabled>Hậu kiểm</button>
+            <button class="btn btn-secondary btn-status" disabled>
+              Hậu kiểm
+            </button>
             <button class="btn btn-success btn-status" disabled>Đã kiểm</button>
           </div>
         </div>
@@ -133,56 +177,63 @@
 <script>
 import api from "@/api";
 import io from "socket.io-client";
-import { VueImageZoomer as ImageZoom } from 'vue-image-zoomer';
+//import { VueImageZoomer as ImageZoom } from 'vue-image-zoomer';
 import modalQuestion from "@/views/modals/questionPopup";
-import { serverIP } from '@/configs/configDefault';
+import { serverIP } from "@/configs/configDefault";
 export default {
-  components:{
-    ImageZoom,
+  components: {
     modalQuestion,
   },
   data() {
     return {
-      lanes: [ ],
+      lanes: [],
     };
   },
   methods: {
-    async openPopupSetStatus(pkid) {
+    async openPopupSetStatus(event,pkid) {
+      event.stopPropagation();
       try {
-        const result = await this.$refs.popup.open("Bạn có muốn thay đổi trạng thái của từ NG thành OK?");
-        if(result){
-          this.setStatus(pkid)
+        const result = await this.$refs.popup.open(
+          "Bạn có muốn thay đổi trạng thái của từ NG thành OK?"
+        );
+        if (result) {
+          this.setStatus(pkid);
         }
       } catch (error) {
         console.error("Error:", error);
       }
     },
-    async openPopupSetEdit(pkid) {
+    cancelZoom(event,lane) {
+      event.stopPropagation();
+      lane.zoom = false;
+    },
+    async openPopupSetEdit(event,pkid) {
+      event.stopPropagation();
       try {
-        const result = await this.$refs.popup.open("Bạn có muốn chỉnh sửa dữ liệu này ở mục hậu kiểm?");
-        if(result){
-          this.setEdit(pkid)
+        const result = await this.$refs.popup.open(
+          "Bạn có muốn chỉnh sửa dữ liệu này ở mục hậu kiểm?"
+        );
+        if (result) {
+          this.setEdit(pkid);
         }
       } catch (error) {
         console.error("Error:", error);
       }
     },
-    async setStatus(pkid){
+    async setStatus(pkid) {
       var result = await api.post("/data/setstatus", { pkid });
-      if(result.status == 200){
-        console.log(result)
-      }
-      else{
-        console.log("ng")
+      if (result.status == 200) {
+        console.log(result);
+      } else {
+        console.log("ng");
       }
     },
-    async setEdit(pkid){
+    async setEdit(pkid) {
       var result = await api.post("/data/setedit", { pkid });
-      if(result.status == 200){
-        console.log(result)
-      }
-      else{
-        console.log("ng")
+      if (result.status == 200) {
+        console.log(result);
+      } else {
+        console.log("ng");
       }
     },
     async logout() {
@@ -194,64 +245,68 @@ export default {
         console.error("Logout error:", error);
       }
     },
-    connectSocket(){
+    connectSocket() {
       const socket = io(serverIP);
       socket.on("dataUpdate", (data) => {
-        
-        const LaneIndex = this.lanes.findIndex((lane) => lane.id === data.LaneID);
-        console.log(data)
-          if (LaneIndex !== -1) {
-            this.lanes[LaneIndex] = { ...this.lanes[LaneIndex], ...data };
-          }
+        const LaneIndex = this.lanes.findIndex(
+          (lane) => lane.id === data.LaneID
+        );
+        console.log(data);
+        if (LaneIndex !== -1) {
+          this.lanes[LaneIndex] = { ...this.lanes[LaneIndex], ...data };
+        }
       });
       socket.emit("sendData");
     },
-    async loadDefaultData(){
-      for(var i = 1;i <= 5;i++){
-          this.lanes.push({
-            id: i,
-            titleTop:`Làn vào ${i}`,
-            titleBottom:`Làn ra ${i}`,
-            LaneIn:{
-              ImageUrlIn:"/assets/images/default.jpg",
-              LicensePlateIn:"--Biển số xe--",
-              CdsidIn:"--Mã nhân viên--",
-              FullNameIn:"--Tên nhân viên rất dài--",
-              DepartmentIn:"--Phòng ban--"
-            },
-            LaneOut:{
-              pkid:'',
-              ImageUrlIn:"/assets/images/default.jpg",
-              ImageUrlOut:"/assets/images/default.jpg",
-              LicensePlateIn:"--Biển số xe--",
-              LicensePlateOut:"--Biển số xe--",
-              DateTimeIn:'',
-              DateTimeOut:'',
-              CdsidIn:"--Mã nhân viên--",
-              FullNameIn:"--Tên nhân viên--",
-              DepartmentIn:"--Phòng ban--",
-              CdsidOut:"--Mã nhân viên--",
-              FullNameOut:"--Tên nhân viên--",
-              DepartmentOut:"--Phòng ban--",
-              Status:"Ok",
-              IsEdit:0,
-            }
-          })
-        }
+    async loadDefaultData() {
+      for (var i = 1; i <= 5; i++) {
+        this.lanes.push({
+          zoom: false,
+          id: i,
+          titleTop: `Làn vào ${i}`,
+          titleBottom: `Làn ra ${i}`,
+          LaneIn: {
+            ImageIn: "/assets/images/default.jpg",
+            LicensePlateIn: "--Biển số xe--",
+            CdsidIn: "--Mã nhân viên--",
+            FullNameIn: "--Tên nhân viên rất dài--",
+            DepartmentIn: "--Phòng ban--",
+          },
+          LaneOut: {
+            pkid: "",
+            ImageIn: "/assets/images/default.jpg",
+            ImageOut: "/assets/images/default.jpg",
+            LicensePlateIn: "--Biển số xe--",
+            LicensePlateOut: "--Biển số xe--",
+            DateTimeIn: "",
+            DateTimeOut: "",
+            CdsidIn: "--Mã nhân viên--",
+            FullNameIn: "--Tên nhân viên--",
+            DepartmentIn: "--Phòng ban--",
+            CdsidOut: "--Mã nhân viên--",
+            FullNameOut: "--Tên nhân viên--",
+            DepartmentOut: "--Phòng ban--",
+            Status: "Ok",
+            Check: 0,
+          },
+        });
+      }
       const response = await api.post("/data/getdefault");
-      
-      if(response.status == 200){
-        const dataResult = response.data.data
-        if(dataResult.length > 0){
-          dataResult.forEach(element => {
-            const LaneIndex = this.lanes.findIndex((lane) => lane.id === element.LaneID);
+
+      if (response.status == 200) {
+        const dataResult = response.data.data;
+        if (dataResult.length > 0) {
+          dataResult.forEach((element) => {
+            const LaneIndex = this.lanes.findIndex(
+              (lane) => lane.id === element.LaneID
+            );
             if (LaneIndex !== -1) {
               this.lanes[LaneIndex] = { ...this.lanes[LaneIndex], ...element };
             }
           });
         }
       }
-    }
+    },
   },
   created() {
     this.connectSocket();
