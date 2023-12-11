@@ -7,10 +7,10 @@
           <label for="">Dạng lỗi</label>
           <select class="form-control" name="typeError" v-model="typeError" id="">
             <option value="">Chọn loại lỗi</option>
-            <option value="Lỗi nhận diện sai">Lỗi nhận diện sai</option>
-            <option value="Lỗi biển">Lỗi biển</option>
-            <option value="Lỗi ánh sáng">Lỗi ánh sáng</option>
-            <option value="Lỗi con người">Lỗi con người</option>
+            <option value="Lỗi biển">Lỗi do biển (Bẩn mờ, cong vênh, biển cao, không biển)</option>
+            <option value="Lỗi phần mềm">Nhận diện sai (Ánh sáng loá, khuất bóng)</option>
+            <option value="Lỗi thẻ">Lỗi do thẻ (Thay đổi mã thẻ)</option>
+            <option value="Lỗi con người">Lỗi con người(Sai vị trí, nghiêng xe, che biển)</option>
           </select>
         </div>
         <div class="form-group">
