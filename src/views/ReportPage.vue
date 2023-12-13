@@ -1,7 +1,7 @@
 <template>
   <ReportEdit ref="popup"></ReportEdit>
   <div class="layout-area p-20">
-    <a href="/" class="btn btn-primary btn-back ">Quay về trang chủ </a>
+    <a href="/" class="btn btn-primary btn-back">Quay về trang chủ </a>
     <div class="layout-title">CHI TIẾT DỮ LIỆU HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
     <div class="layout-filter flex-wrap">
       <div class="filter-group flex-wrap col-sm-10">
@@ -89,25 +89,36 @@
             <option value="2">Hậu kiểm</option>
             <option value="1">Đã kiểm</option>
             <option value="0">Tất cả</option>
-            
           </select>
         </div>
       </div>
       <div class="filter-action col-sm-2">
-        <div
-          class="btn btn-primary"
-          @click="exportToExcel"
-          style="margin-right: 10px"
-        >
-          Xuất excel
-        </div>
-        <div
+        <button
           class="btn btn-primary"
           @click="searchData"
           style="margin-right: 10px"
+          :disabled="isDisable"
         >
           Tìm kiếm
-        </div>
+        </button>
+        <button
+          class="btn btn-primary"
+          @click="exportToExcel"
+          style="margin-right: 10px"
+          :disabled="isDisable"
+        >
+          Xuất excel
+        </button>
+        <button
+          class="btn btn-primary"
+          @click="sendMail"
+          style="margin-right: 10px"
+          :disabled="isDisable"
+        >
+          Gửi mail
+        </button>
+        
+        
       </div>
     </div>
     <div class="layout-content">
@@ -142,7 +153,7 @@
         </thead>
 
         <tbody v-if="!loading">
-          <tr  v-for="(item, key) in this.data" :key="item._doc._id">
+          <tr v-for="(item, key) in this.data" :key="item._doc._id">
             <th
               scope="row"
               style="vertical-align: middle; text-align: center; width: 3%"
@@ -384,6 +395,7 @@ export default {
       check: 2,
       totalRecords: 0,
       loading: false,
+      isDisable: false,
     };
   },
   setup() {
@@ -419,16 +431,52 @@ export default {
     this.getDataDefault();
   },
   methods: {
+    async sendMail() {
+      try {
+        this.isDisable = true;
+
+        const response = await api.post("/data/sendmail", {
+          fordCardID: this.fordCardID,
+          fullName: this.fullName,
+          cdsid: this.cdsid,
+          department: this.department,
+          startDateTime: this.startDateTime,
+          endDateTime: this.endDateTime,
+          status: this.status,
+          check: this.check,
+        });
+        if (response.status == 200) {
+          
+          alert("Gửi thành công")
+        }
+        else{
+          alert("Gửi không thành công,vui lòng gửi lại")
+        }
+        this.isDisable = false;
+      } catch {
+        this.isDisable = false;
+      } finally {
+        this.isDisable = false;
+      }
+    },
     exportToExcel() {
+      this.isDisable = true;
       const table = this.$refs.myTable;
       const ws = XLSX.utils.table_to_sheet(table);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
       XLSX.writeFile(wb, `${this.getDatetime(new Date(), "file")}.xlsx`);
+      this.isDisable = false;
     },
-    async openEdit(pkid, confirm, note, status,typeError) {
+    async openEdit(pkid, confirm, note, status, typeError) {
       try {
-        const result = await this.$refs.popup.open(pkid, confirm, note, status,typeError);
+        const result = await this.$refs.popup.open(
+          pkid,
+          confirm,
+          note,
+          status,
+          typeError
+        );
         if (result) {
           this.searchData();
         }
@@ -444,7 +492,8 @@ export default {
       }));
     },
     async searchData() {
-      this.loading = true; 
+      this.isDisable = true;
+      this.loading = true;
       try {
         const response = await api.post("/data/getreportdata", {
           fordCardID: this.fordCardID,
@@ -464,6 +513,8 @@ export default {
         console.log(error);
       } finally {
         this.loading = false; // Kết thúc loading, dù có lỗi hay không
+        this.isDisable = false;
+        console.log(this.isDisable);
       }
     },
     getDatetime(dateTimeString, type) {
