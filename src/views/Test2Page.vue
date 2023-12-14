@@ -15,7 +15,7 @@
     },
     methods: {
       async createData() {
-        const response = await api.post("/data/csvdata");
+        const response = await api.post("/data/create");
         console.log(response)
       },
     },
