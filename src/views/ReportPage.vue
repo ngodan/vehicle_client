@@ -434,7 +434,7 @@ export default {
     async sendMail() {
       try {
         this.isDisable = true;
-
+        this.loading = true;
         const response = await api.post("/data/sendmail", {
           fordCardID: this.fordCardID,
           fullName: this.fullName,
@@ -457,16 +457,19 @@ export default {
         this.isDisable = false;
       } finally {
         this.isDisable = false;
+        this.loading = false;
       }
     },
     exportToExcel() {
       this.isDisable = true;
+      this.loading = true;
       const table = this.$refs.myTable;
       const ws = XLSX.utils.table_to_sheet(table);
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
       XLSX.writeFile(wb, `${this.getDatetime(new Date(), "file")}.xlsx`);
       this.isDisable = false;
+      this.loading = false;
     },
     async openEdit(pkid, confirm, note, status, typeError) {
       try {
@@ -514,7 +517,6 @@ export default {
       } finally {
         this.loading = false; // Kết thúc loading, dù có lỗi hay không
         this.isDisable = false;
-        console.log(this.isDisable);
       }
     },
     getDatetime(dateTimeString, type) {
