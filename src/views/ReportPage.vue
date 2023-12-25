@@ -3,6 +3,7 @@
   <div class="layout-area p-20">
     <a href="/" class="btn btn-primary btn-back">Quay về trang chủ </a>
     <div class="layout-title">BÁO CÁO CUỐI CA HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
+    <div class="layout-description">Tổng số xe ra vào ca {{ vehicleCount.shift }}: <strong>{{vehicleCount.countVehicle}} xe</strong> </div>
     <div class="layout-filter flex-wrap">
       <div class="filter-group flex-wrap col-sm-10">
         <div class="form-group col-sm-2">
@@ -433,7 +434,8 @@ import moment from "moment-timezone";
 import { VueImageZoomer as ImageZoom } from "vue-image-zoomer";
 import ReportEdit from "@/views/modals/ReportEdit";
 import XLSX from "xlsx";
-
+import io from "socket.io-client";
+import { serverIP } from "@/configs/configDefault";
 export default {
   components: { ImageZoom, ReportEdit },
   data() {
@@ -449,6 +451,10 @@ export default {
       totalRecords: 0,
       loading: false,
       isDisable: false,
+      vehicleCount : {
+        countVehicle : 0,
+        shift : 1
+       } ,
     };
   },
   setup() {
@@ -482,6 +488,7 @@ export default {
   created() {
     this.searchData();
     this.getDataDefault();
+    this.connectSocket();
   },
   methods: {
     async sendMail() {
@@ -592,6 +599,16 @@ export default {
       } else {
         return formattedDateTime;
       }
+    },
+    connectSocket() {
+      const socket = io(serverIP);
+      socket.on("vehicleData", (data) => {
+        if(data != null ){
+          console.log(data)
+          this.vehicleCount = data
+        }
+      });
+      socket.emit("getData");
     },
     // getDatetime(dateTimeString, type) {
     //   const date = new Date(dateTimeString);

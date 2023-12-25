@@ -887,3 +887,8 @@ a.btn.btn-primary.btn-back {
 td ul li strong {
     width: 100%;
 }
+.layout-description {
+    position: fixed;
+    right: 85px;
+    top: 50px;
+}
