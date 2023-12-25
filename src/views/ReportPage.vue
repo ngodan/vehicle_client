@@ -2,7 +2,7 @@
   <ReportEdit ref="popup"></ReportEdit>
   <div class="layout-area p-20">
     <a href="/" class="btn btn-primary btn-back">Quay về trang chủ </a>
-    <div class="layout-title">CHI TIẾT DỮ LIỆU HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
+    <div class="layout-title">BÁO CÁO CUỐI CA HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
     <div class="layout-filter flex-wrap">
       <div class="filter-group flex-wrap col-sm-10">
         <div class="form-group col-sm-2">
@@ -117,8 +117,6 @@
         >
           Gửi mail
         </button>
-        
-        
       </div>
     </div>
     <div class="layout-content">
@@ -134,98 +132,153 @@
         <thead class="thead-light">
           <tr>
             <th colspan="1" rowspan="2" style="width: 3%">STT</th>
-            <th colspan="1" rowspan="2" style="width: 7%">Loại</th>
-            <th colspan="1" rowspan="2" style="width: 15%">
-              Thông tin nhân viên
-            </th>
-            <th colspan="2" rowspan="1" style="width: 23%">Thông tin vào</th>
-            <th colspan="2" rowspan="1" style="width: 23%">Thông tin ra</th>
-            <th colspan="1" rowspan="2" style="width: 12%">Nguyên nhân</th>
-            <th colspan="1" rowspan="2" style="width: 12%">Hành động</th>
+            <th colspan="3" rowspan="1" style="width: 25%">Thông tin vào</th>
+            <th colspan="3" rowspan="1" style="width: 25%">Thông tin ra</th>
+            <th colspan="1" rowspan="2" style="width: 9%">Loại lỗi</th>
+            <th colspan="1" rowspan="2" style="width: 18%">Mô tả cụ thể lỗi</th>
+            <th colspan="1" rowspan="2" style="width: 18%">Hành động</th>
             <th colspan="1" rowspan="2" style="width: 5%">Thao tác</th>
           </tr>
           <tr>
-            <th scope="col" style="width: 160px">Ngày</th>
-            <th scope="col" style="width: 160px">Giờ</th>
-            <th scope="col" style="width: 160px">Ngày</th>
-            <th scope="col" style="width: 160px">Giờ</th>
+            <th scope="col" style="width: 7%">Thông tin nhân viên</th>
+            <th scope="col" style="width: 9%">Ngày</th>
+            <th scope="col" style="width: 9%">Giờ</th>
+            <th scope="col" style="width: 7%">Thông tin nhân viên</th>
+            <th scope="col" style="width: 9%">Ngày</th>
+            <th scope="col" style="width: 9%">Giờ</th>
           </tr>
         </thead>
 
         <tbody v-if="!loading">
           <tr v-for="(item, key) in this.data" :key="item._doc._id">
-            <th
+            <td
               scope="row"
               style="vertical-align: middle; text-align: center; width: 3%"
             >
               {{ key + 1 }}
-            </th>
-            <td style="width: 7%"></td>
-            <td style="vertical-align: middle; width: 15%">
-              <ul>
-                <li>
-                  Ford Card ID:<strong>{{ item._doc.FordCardIDIn }}</strong>
-                </li>
-                <li>
-                  CDSID: <strong>{{ item._doc.CdsidIn }}</strong>
-                </li>
-                <li>
-                  Full name: <strong>{{ item._doc.FullNameIn }}</strong>
-                </li>
-                <li>
-                  Department: <strong>{{ item._doc.DepartmentIn }}</strong>
-                </li>
-              </ul>
             </td>
-            <td colspan="2" style="width: 23%">
-              <div class="data-top">
-                <div class="data-top__item">
-                  {{ getDatetime(item._doc.DateTimeIn, "date") }}
+            <td colspan="2" style="width: 25%; padding: 0px">
+              <div class="grid-data">
+                <div class="data-infor">
+                  <ul>
+                    <li>
+                      Ford Card ID:<strong>{{
+                        item._doc.FordCardIDIn
+                          ? item._doc.FordCardIDIn
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      CDSID:
+                      <strong>{{
+                        item._doc.FordCardIDIn ? item._doc.CdsidIn : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      Full name:
+                      <strong>{{
+                        item._doc.FordCardIDIn
+                          ? item._doc.FullNameIn
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      Department:
+                      <strong>{{
+                        item._doc.FordCardIDIn
+                          ? item._doc.DepartmentIn
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                  </ul>
                 </div>
-                <div class="data-top__item">
-                  {{ getDatetime(item._doc.DateTimeIn, "time") }}
+                <div class="data-top">
+                  <div class="data-top__item">
+                    {{ getDatetime(item._doc.DateTimeIn, "date") }}
+                  </div>
+                  <div class="data-top__item">
+                    {{ getDatetime(item._doc.DateTimeIn, "time") }}
+                  </div>
                 </div>
-              </div>
-              <div class="data-bottom">
-                <ImageZoom
-                  v-if="item._doc.ImageIn != null"
-                  :regular="item._doc.ImageIn"
-                  :zoom="item._doc.ImageIn"
-                  :zoom-amount="2"
-                  :click-zoom="true"
-                >
-                  <img :src="item._doc.ImageIn" alt="" />
-                </ImageZoom>
-                <div v-else>Không có</div>
-              </div>
-            </td>
-            <td colspan="2" style="width: 23%">
-              <div class="data-top">
-                <div class="data-top__item">
-                  {{ getDatetime(item._doc.DateTimeOut, "date") }}
+                <div class="data-bottom">
+                  <ImageZoom
+                    v-if="item._doc.ImageIn != null"
+                    :regular="item._doc.ImageIn"
+                    :zoom="item._doc.ImageIn"
+                    :zoom-amount="2"
+                    :click-zoom="true"
+                  >
+                    <img :src="item._doc.ImageIn" alt="" />
+                  </ImageZoom>
+                  <div v-else>Không có</div>
                 </div>
-                <div class="data-top__item">
-                  {{ getDatetime(item._doc.DateTimeOut, "time") }}
-                </div>
-              </div>
-              <div class="data-bottom">
-                <ImageZoom
-                  v-if="item._doc.ImageOut != null"
-                  :regular="item._doc.ImageOut"
-                  :zoom="item._doc.ImageOut"
-                  :zoom-amount="2"
-                  :click-zoom="true"
-                >
-                  <img :src="item._doc.ImageOut" alt="" />
-                </ImageZoom>
-                <div v-else>Không có</div>
               </div>
             </td>
-            <td style="width: 12%">{{ item._doc.Rootcause }}</td>
-            <td style="width: 12%">{{ item._doc.Action }}</td>
+            <td colspan="2" style="width: 25%; padding: 0px">
+              <div class="grid-data">
+                <div class="data-infor">
+                  <ul>
+                    <li>
+                      Ford Card ID:<strong>{{
+                        item._doc.FordCardIDOut
+                          ? item._doc.FordCardIDOut
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      CDSID:
+                      <strong>{{
+                        item._doc.FordCardIDOut
+                          ? item._doc.CdsidOut
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      Full name:
+                      <strong>{{
+                        item._doc.FordCardIDOut
+                          ? item._doc.FullNameOut
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      Department:
+                      <strong>{{
+                        item._doc.FordCardIDOut
+                          ? item._doc.DepartmentOut
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                  </ul>
+                </div>
+                <div class="data-top">
+                  <div class="data-top__item">
+                    {{ getDatetime(item._doc.DateTimeOut, "date") }}
+                  </div>
+                  <div class="data-top__item">
+                    {{ getDatetime(item._doc.DateTimeOut, "time") }}
+                  </div>
+                </div>
+                <div class="data-bottom">
+                  <ImageZoom
+                    v-if="item._doc.ImageOut != null"
+                    :regular="item._doc.ImageOut"
+                    :zoom="item._doc.ImageOut"
+                    :zoom-amount="2"
+                    :click-zoom="true"
+                  >
+                    <img :src="item._doc.ImageOut" alt="" />
+                  </ImageZoom>
+                  <div v-else>Không có</div>
+                </div>
+              </div>
+            </td>
+            <td style="width: 9%">{{ item._doc.TypeOfError }}</td>
+            <td style="width: 18%">{{ item._doc.Rootcause }}</td>
+            <td style="width: 18%">{{ item._doc.Action }}</td>
             <td
               class="td-handle"
-              style="width: 5%; vertical-align: middle; text-align: center"
+              style="vertical-align: middle; text-align: center; width: 5%"
             >
               <div class="row-handle-group">
                 <div
@@ -352,7 +405,7 @@
             <td style="vertical-align: middle; text-align: center">
               {{ key }}
             </td>
-            <td></td>
+            <td>{{ item._doc.TypeOfError }}</td>
             <td>{{ item._doc.FordCardIDIn }}</td>
             <td>{{ item._doc.FullNameIn }}</td>
             <td>{{ item._doc.CdsidIn }}</td>
@@ -446,11 +499,9 @@ export default {
           check: this.check,
         });
         if (response.status == 200) {
-          
-          alert("Gửi thành công")
-        }
-        else{
-          alert("Gửi không thành công,vui lòng gửi lại")
+          alert("Gửi thành công");
+        } else {
+          alert("Gửi không thành công,vui lòng gửi lại");
         }
         this.isDisable = false;
       } catch {
@@ -520,27 +571,50 @@ export default {
       }
     },
     getDatetime(dateTimeString, type) {
-      const date = new Date(dateTimeString);
       if (dateTimeString == null) {
         return "Không có";
       }
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      const hours = String(date.getHours()).padStart(2, "0");
-      const minutes = String(date.getMinutes()).padStart(2, "0");
-      const seconds = String(date.getSeconds()).padStart(2, "0");
+
+      // Sử dụng moment.utc thay vì moment
+      const date = moment.utc(dateTimeString);
+
+      const formattedDate = date.format("YYYY-MM-DD");
+      const formattedTime = date.format("HH:mm:ss");
+      const formattedFile = date.format("HH_mm_ss_YYYY_MM_DD");
+      const formattedDateTime = date.format("HH:mm:ss YYYY/MM/DD");
 
       if (type == "date") {
-        return `${year}-${month}-${day}`;
+        return formattedDate;
       } else if (type == "time") {
-        return `${hours}:${minutes}:${seconds}`;
+        return formattedTime;
       } else if (type == "file") {
-        return `${hours}_${minutes}_${seconds}_${year}_${month}_${day}`;
+        return formattedFile;
       } else {
-        return `'${hours}:${minutes}:${seconds} ${year}/${month}/${day}`;
+        return formattedDateTime;
       }
     },
+    // getDatetime(dateTimeString, type) {
+    //   const date = new Date(dateTimeString);
+    //   if (dateTimeString == null) {
+    //     return "Không có";
+    //   }
+    //   const year = date.getFullYear();
+    //   const month = String(date.getMonth() + 1).padStart(2, "0");
+    //   const day = String(date.getDate()).padStart(2, "0");
+    //   const hours = String(date.getHours()).padStart(2, "0");
+    //   const minutes = String(date.getMinutes()).padStart(2, "0");
+    //   const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    //   if (type == "date") {
+    //     return `${year}-${month}-${day}`;
+    //   } else if (type == "time") {
+    //     return `${hours}:${minutes}:${seconds}`;
+    //   } else if (type == "file") {
+    //     return `${hours}_${minutes}_${seconds}_${year}_${month}_${day}`;
+    //   } else {
+    //     return `'${hours}:${minutes}:${seconds} ${year}/${month}/${day}`;
+    //   }
+    // },
   },
 };
 </script>
