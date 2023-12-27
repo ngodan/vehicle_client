@@ -15,7 +15,7 @@
     },
     methods: {
       async createData() {
-        const response = await api.post("/data/create");
+        const response = await api.post("/data/sendmail");
         console.log(response)
       },
     },
