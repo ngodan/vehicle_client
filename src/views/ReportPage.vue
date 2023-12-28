@@ -3,7 +3,7 @@
   <div class="layout-area p-20">
     <a href="/" class="btn btn-primary btn-back">Quay về trang chủ </a>
     <div class="layout-title">BÁO CÁO CUỐI CA HỆ THỐNG QUẢN LÝ XE TỰ ĐỘNG</div>
-    <div class="layout-description">Tổng số xe ra vào ca {{ vehicleCount.shift }}: <strong>{{vehicleCount.countVehicle}} xe</strong> </div>
+    <div class="layout-description">Ca: {{ vehicleCount.shift }} | Xe vào: <strong>{{vehicleCount.countVehicleWithNullOut}} </strong> | Xe ra: <strong>{{vehicleCount.countVehicleWithNotNullOut}} </strong></div>
     <div class="layout-filter flex-wrap">
       <div class="filter-group flex-wrap col-sm-10">
         <div class="form-group col-sm-2">
@@ -452,7 +452,8 @@ export default {
       loading: false,
       isDisable: false,
       vehicleCount : {
-        countVehicle : 0,
+        countVehicleWithNullOut : 0,
+        countVehicleWithNotNullOut : 0,
         shift : 1
        } ,
     };
