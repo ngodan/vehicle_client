@@ -484,7 +484,7 @@ export default {
       const now = moment()
         .tz("Asia/Ho_Chi_Minh")
         .startOf("day")
-        .add(6, "hours");
+        .add(7, "hours");
       return now.format("YYYY-MM-DDTHH:mm");
     }
 
