@@ -191,6 +191,14 @@
                           : "Không có"
                       }}</strong>
                     </li>
+                    <li>
+                      License Plate:
+                      <strong>{{
+                        item._doc.LicensePlateIn
+                          ? item._doc.LicensePlateIn
+                          : "Không có"
+                      }}</strong>
+                    </li>
                   </ul>
                 </div>
                 <div class="data-top">
@@ -247,6 +255,14 @@
                       <strong>{{
                         item._doc.FordCardIDOut
                           ? item._doc.DepartmentOut
+                          : "Không có"
+                      }}</strong>
+                    </li>
+                    <li>
+                      License Plate:
+                      <strong>{{
+                        item._doc.LicensePlateOut
+                          ? item._doc.LicensePlateOut
                           : "Không có"
                       }}</strong>
                     </li>
